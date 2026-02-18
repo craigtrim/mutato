@@ -1,0 +1,1 @@
+from .candidate_synonym_blacklist_kb import d_candidate_synonym_blacklist
