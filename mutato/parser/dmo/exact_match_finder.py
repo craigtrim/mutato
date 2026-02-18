@@ -3,8 +3,8 @@
 """ Perform Sliding Window Extraction for Candidate Synonym Swapping """
 
 
-from mutato.core import (
-from mutato.parser.dmo.exact import (
+from mutato.core import configure_logging, EnvIO, Stopwatch, isEnabledForInfo, isEnabledForDebug
+from mutato.parser.dmo.exact import SlidingWindowExtract, SlidingWindowBlacklist, SlidingWindowLookup
 from mutato.parser.dto import d_candidate_synonym_blacklist
 
 class ExactMatchFinder(object):

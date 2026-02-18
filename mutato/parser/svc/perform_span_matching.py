@@ -4,15 +4,14 @@
 
 
 from mutato.core import (
-from mutato.finder.multiquery.bp import FindOntologyData
-from mutato.parser.dmo import SpanMatchFinder, SpanMatchSwapper
-
     Stopwatch,
     Enforcer,
     configure_logging,
     isEnabledForDebug,
     isEnabledForInfo
 )
+from mutato.finder.multiquery.bp import FindOntologyData
+from mutato.parser.dmo import SpanMatchFinder, SpanMatchSwapper
 
 
 class PerformSpanMatching(object):

@@ -41,11 +41,10 @@ class FindEquivalents(object):
             - The method aggregates data from multiple OWL API instances, which are accessed through self._owlapis.
         """
 
-        _type = type(entities)
-        if _type == str:
+        if isinstance(entities, str):
             entities = [entities]
-        elif _type != list:
-            raise ValueError(f"Unexpected Type: {_type}")
+        elif not isinstance(entities, list):
+            raise ValueError(f"Unexpected Type: {type(entities)}")
 
         # Normalize entity names
         entities = [
@@ -69,10 +68,7 @@ class FindEquivalents(object):
                 x for x in entities
                 if x in d_equivalents
             ]:
-                [
-                    d_master[entity].add(x)
-                    for x in d_equivalents[entity]
-                ]
+                d_master[entity].update(d_equivalents[entity])
 
         # Convert sets to lists
         return {k: list(v) for k, v in d_master.items()}

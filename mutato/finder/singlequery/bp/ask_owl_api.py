@@ -7,17 +7,67 @@ from functools import lru_cache
 from collections import defaultdict
 
 from mutato.finder.singlequery.svc import (
+    LoadOntologyModel,
+    QueryOntologyModel,
+    GenerateViewTrie,
+    GenerateViewSpans,
+    GeneratePlusSpans,
+    GenerateViewSynonyms
+)
 from mutato.finder.singlequery.dto import QueryResultType
-        from rdflib.plugins.sparql.processor import SPARQLResult
 from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
-        result: SPARQLResult = self._execute_query(
-            reverse=False,
+
+class AskOwlAPI(object):
+    """ API for the ask-owl Microservice """
+
+    def __init__(self,
+                 ontology_name: str,
+                 absolute_path: str,
+                 namespace: str = None):
+        """ Load and initialize the OWL ontology for SPARQL querying.
+
+        Args:
+            ontology_name (str): the name of the ontology file (without .owl extension)
+            absolute_path (str): absolute path to the directory containing the OWL file
+            namespace (str, optional): the RDF namespace URI. Defaults to None.
+        """
+        self.logger = configure_logging(__name__)
+        self.absolute_path = absolute_path
+
+        loader = LoadOntologyModel(
+            ontology_name=ontology_name,
+            absolute_path=absolute_path,
+            namespace=namespace)
+
+        self.prefix = loader.prefix
+        self.ontology_name = loader.ontology_name
+
+        graph = loader.process()
+
+        self._execute_query = QueryOntologyModel(graph).process
+
+    def adhoc(self,
+              sparql_query: str,
+              result_type: QueryResultType,
+              to_lowercase: bool = True,
+              reverse: bool = False):
+        """ Execute an ad-hoc SPARQL query against the loaded ontology graph.
+
+        Args:
+            sparql_query (str): the SPARQL query string
+            result_type (QueryResultType): how to transform the result set
+            to_lowercase (bool, optional): lowercase all output. Defaults to True.
+            reverse (bool, optional): reverse subject/object order. Defaults to False.
+
+        Returns:
+            dict or list: the query result
+        """
+        return self._execute_query(
             sparql=sparql_query,
             result_type=result_type,
-            to_lowercase=to_lowercase)
-
-        return result
+            to_lowercase=to_lowercase,
+            reverse=reverse)
 
     @lru_cache(maxsize=6, typed=False)
     def ngrams(self,
@@ -43,7 +93,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
         return [x for x in results if x.count('_') == gram_level - 1]
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def trie(self) -> dict | None:
         """ Generate Entities in a Trie View
 
@@ -113,7 +163,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
     #     return d_results
     # --------------------------------------------------------------------------------------------------------
 
-    @lru_cache(typed=False)
+    @lru_cache(maxsize=1024, typed=False)
     def by_predicate(self,
                      predicate: str,
                      to_lowercase: bool = True,
@@ -172,7 +222,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
         return d_results
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def keyed_labels(self) -> list:
         """ Retrieve rdfs:label values from the Graph
 
@@ -186,7 +236,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             to_lowercase=False,
             result_type=QueryResultType.DICT_OF_STR2STR)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def labels(self) -> list:
         """ Retrieve rdfs:label values from the Graph
 
@@ -199,7 +249,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             to_lowercase=False,
             result_type=QueryResultType.LIST_OF_STRINGS)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def entities(self) -> list:
         """ Retrieve entities from the Graph
 
@@ -220,7 +270,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             sparql=sparql, to_lowercase=is_lowercase,
             result_type=QueryResultType.LIST_OF_STRINGS)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def parents(self, entity: str):
         sparql = """
             SELECT ?a WHERE  { :#ENTITY rdfs:subClassOf ?a }
@@ -239,7 +289,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             result_type=QueryResultType.LIST_OF_STRINGS,
         )
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def ancestors(self, entity: str) -> list[str]:
         sparql = """
             SELECT ?a WHERE  { :#ENTITY rdfs:subClassOf+ ?a }
@@ -263,7 +313,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
         return results
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def children(self, entity: str):
         sparql = """
             SELECT ?a WHERE  { ?a rdfs:subClassOf :#ENTITY }
@@ -282,7 +332,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             result_type=QueryResultType.LIST_OF_STRINGS,
         )
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def descendants(self, entity: str):
         sparql = """
             SELECT ?a WHERE  { ?a rdfs:subClassOf+ :#ENTITY }
@@ -365,7 +415,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
     #         result_type=QueryResultType.LIST_OF_STRINGS)
     # --------------------------------------------------------------------------------------------------------
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def types(self,
               to_lowercase: bool = True) -> list:
         """ Retrieve rdf:type values from the Graph
@@ -382,7 +432,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             to_lowercase=to_lowercase,
             result_type=QueryResultType.LIST_OF_STRINGS)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def _synonym_query(self) -> dict | None:
         """ Generate n-Gram Spans suitable for Synonym Matching
 
@@ -439,11 +489,11 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             for synonym in d_results[k]:
                 synonyms = [x.strip() for x in synonym.split(',')]
                 synonyms = [x for x in synonyms if x and len(x)]
-                [d_normalized[k].append(x) for x in synonyms]
+                d_normalized[k].extend(synonyms)
 
         return d_normalized
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def predicates(self) -> dict | None:
         """
         Retrieves the predicates from the OWL API.
@@ -474,11 +524,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             if predicates and len(predicates):
                 d_predicates[prefix] = predicates
 
-                [
-                    s_unique.add(x)
-                    for x in predicates
-                    if x and len(x)
-                ]
+                s_unique.update(x for x in predicates if x)
 
         predicates = self._execute_query(
             sparql=f"""SELECT DISTINCT ?p WHERE {{ ?s ?p ?o . }}""",
@@ -493,7 +539,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
         return d_predicates
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def synonyms(self) -> dict | None:
         """ Generate a Dictionary of Entities keyed to Synonym Lists
 
@@ -510,7 +556,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
         return GenerateViewSynonyms().process(d_results)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def synonyms_rev(self) -> dict:
         """ Reverse Synonym Dictionary:
         Synonyms are keyed to one-or-more Entities
@@ -528,7 +574,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
         return GenerateViewSynonyms().process(d_results, reverse=True)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def equivalents(self) -> dict[str, list[str]] | None:
         """
         Retrieves equivalent classes from an RDF graph and organizes them into a bidirectional mapping.
@@ -595,7 +641,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
         # convert sets to lists
         return {k: list(v) for k, v in d_bidir.items()}
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def spans(self) -> dict | None:
         """ Entity Spans for Long-Range Matching
 
@@ -639,7 +685,7 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
             # https://github.com/craigtrim/owl-parser/issues/7
             # Ensuring output dict is str:list[str]
             for k in d:
-                [d_merged[k].append(x) for x in d[k]]
+                d_merged[k].extend(d[k])
 
         merge(GeneratePlusSpans().process(d_results))
         merge(GenerateViewSpans().process(d_results))

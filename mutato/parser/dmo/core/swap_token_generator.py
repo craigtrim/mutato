@@ -52,7 +52,7 @@ class SwapTokenGenerator(object):
             ner = ner.upper()
 
         def get_ontologies() -> list:
-            if type(self._ontologies) == list:
+            if isinstance(self._ontologies, list):
                 return self._ontologies
             return [self._ontologies]
 

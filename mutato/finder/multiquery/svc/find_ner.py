@@ -118,11 +118,11 @@ class FindNER(object):
 
         graffl_ners = self._find_graffl_ner(input_text)
         if graffl_ners:
-            [ners.append(x) for x in graffl_ners]
+            ners.extend(graffl_ners)
 
         spacy_ners = self._find_spacy_ner(input_text)
         if spacy_ners:
-            [ners.append(x) for x in spacy_ners]
+            ners.extend(spacy_ners)
 
         if not len(ners):
             ners.append('NER')

@@ -10,6 +10,8 @@ from mutato.core import configure_logging, Stopwatch, Enforcer, isEnabledForDebu
 class PerformHierarchyMatching(object):
     """ Use Token Hierarchies to perform Inferred Matching """
 
+    _MAX_GRAM_SIZE = 9
+
     def __init__(self,
                  find_ontology_data: FindOntologyData):
         """ Change Log
@@ -39,7 +41,7 @@ class PerformHierarchyMatching(object):
     def _process(self,
                  tokens: list) -> tuple:
 
-        gram_size = 9
+        gram_size = self._MAX_GRAM_SIZE
         while gram_size > 1:  # GRAFFLR-188-1039702022; No Unigrams!
 
             list_of_candidates = self._finder(

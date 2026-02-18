@@ -5,16 +5,15 @@
 
 import spacy
 from mutato.parser.svc import (
-from spacy.lang.en import English
-from lingpatlab import SpacyResult, LingPatLab, Sentence
-from mutato.finder.multiquery.bp import FindOntologyData, FindOntologyJSON
-from mutato.core import Stopwatch, Enforcer, configure_logging, isEnabledForDebug
-
     AugmentTokenHierarchy,
     PerformExactMatching,
     PerformHierarchyMatching,
     PerformSpanMatching
 )
+from spacy.lang.en import English
+from lingpatlab import SpacyResult, LingPatLab, Sentence
+from mutato.finder.multiquery.bp import FindOntologyData, FindOntologyJSON
+from mutato.core import Stopwatch, Enforcer, configure_logging, isEnabledForDebug
 
 
 class MutatoAPI(object):

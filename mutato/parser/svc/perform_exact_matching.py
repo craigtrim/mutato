@@ -4,19 +4,20 @@
 
 
 from mutato.core import (
-from mutato.parser.dmo import (
-from mutato.finder.multiquery.bp import FindOntologyData
-
     Enforcer,
     Stopwatch,
     configure_logging,
     isEnabledForInfo,
     isEnabledForDebug,
 )
+from mutato.parser.dmo import ExactMatchFinder, ExactMatchSwapper, SwapResultSummarizer
+from mutato.finder.multiquery.bp import FindOntologyData
 
 
 class PerformExactMatching(object):
     """ Perform Exact Matching """
+
+    _MAX_GRAM_SIZE = 10
 
     def __init__(self,
                  find_ontology_data: FindOntologyData):
@@ -64,7 +65,7 @@ class PerformExactMatching(object):
     def _process(self,
                  tokens: list) -> list:
 
-        gram_size = 10  # 324
+        gram_size = self._MAX_GRAM_SIZE
         while gram_size > 0:
 
             exact_match_finder = ExactMatchFinder(
