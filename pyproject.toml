@@ -1,0 +1,78 @@
+[project]
+name = "mutato"
+version = "0.5.22"
+description = "Mutato Synonym Swapping API"
+readme = "README.md"
+license = { text = "Proprietary" }
+authors = [
+    { name = "Craig Trim", email = "ctrim@maryville.edu" },
+]
+maintainers = [
+    { name = "Craig Trim", email = "ctrim@maryville.edu" },
+]
+requires-python = ">=3.10,<3.14"
+keywords = [
+    "transcript schools",
+    "text extraction",
+    "statistical NLP",
+    "semantic NLP",
+    "AI",
+    "data analytics",
+    "natural language processing",
+    "machine learning",
+    "text analysis",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: Other/Proprietary License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Indexing",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = [
+    "spacy==3.8.2",
+    "lingpatlab",
+    "rdflib",
+    "numpy==2.2.6",
+]
+
+[project.urls]
+Repository = "https://github.com/Maryville-University-DLX/transcriptiq/libs/core/mutato-core"
+"Bug Tracker" = "https://github.com/Maryville-University-DLX/transcriptiq/issues"
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "*"
+flakeheaven = "*"
+plac = "*"
+pre-commit = "^2.20.0"
+pytest = "*"
+en-core-web-sm = { path = "resources/lib/en_core_web_sm-3.8.0.tar.gz" }
+
+[tool.poetry.build]
+generate-setup-file = true
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+
+[tool.flakeheaven]
+base = "https://raw.githubusercontent.com/flakeheaven/flakeheaven/main/pyproject.toml"
+exclude = ["__init__.py", "README.md", "setup.py", ".venv", ".git"]
+format = "grouped"
+max_line_length = 500
+show_source = true
+
+[tool.flakeheaven.plugins]
+"flake8-*" = ["+*"]
+flake8-bandit = ["-*", "+S1??"]
+flake8-docstrings = ["-*"]
+pyflakes = ["+*", "-F401", "-F403"]
