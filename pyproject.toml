@@ -45,6 +45,9 @@ dependencies = [
     "numpy==2.2.6",
 ]
 
+[project.scripts]
+parse = "mutato.cli:main"
+
 [project.urls]
 Repository = "https://github.com/Maryville-University-DLX/transcriptiq/libs/core/mutato-core"
 "Bug Tracker" = "https://github.com/Maryville-University-DLX/transcriptiq/issues"
