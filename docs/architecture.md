@@ -115,6 +115,7 @@ Operates on a single OWL file.
 
 - `OwlGraphConnector` -- loads the OWL/Turtle file into an RDFLib `Graph`
 - `AskOwlAPI` -- wraps the graph with a SPARQL query interface; all results are lazy and cached via `@lru_cache`
+- `MixedAskOwlAPI` -- subclass of `AskOwlAPI` for MIXED ontologies; overrides `ngrams`, `children`, and `parents` to include `owl:NamedIndividual` leaves
 
 The core query pattern:
 
@@ -195,6 +196,35 @@ Output structure:
 
 ---
 
+## OWL Schema Detection
+
+`OWLSchemaDetector` probes an rdflib `Graph` to identify which structural pattern an ontology uses. Detection is automatic and requires no consumer configuration.
+
+| Schema | Detection criteria |
+|---|---|
+| `CLASS_BASED` | Only `owl:Class` entities connected via `rdfs:subClassOf` |
+| `MIXED` | Both `owl:Class`/`rdfs:subClassOf` taxonomy and `owl:NamedIndividual` leaf entities |
+| `INDIVIDUAL` | Only `owl:NamedIndividual` entities, no `rdfs:subClassOf` present |
+| `SKOS` | Entities typed as `skos:Concept` (highest priority) |
+
+Detection runs in priority order: SKOS > MIXED > INDIVIDUAL > CLASS_BASED.
+
+`UniversalMDAGenerator` wraps both `MDAGenerator` and `MixedAskOwlAPI` behind a single interface. It calls `OWLSchemaDetector` internally and routes to the appropriate extraction strategy without any consumer input.
+
+```python
+from mutato.mda import UniversalMDAGenerator
+
+d_owl = UniversalMDAGenerator(
+    ontology_name="my_ontology",
+    absolute_path="/path/to/owls",
+    namespace="http://example.org/my_ontology#"
+).generate()
+```
+
+The output dict is identical in shape to `MDAGenerator.generate()` for all schema patterns. `UniversalMDAGenerator` is the recommended entry point when the ontology structure is not known in advance.
+
+---
+
 ## Design Patterns
 
 | Pattern | Where Used |
@@ -219,6 +249,7 @@ All ontology queries are cached at the `AskOwlAPI` level using `@lru_cache(maxsi
 | Environment Variable | Default | Effect |
 |---|---|---|
 | `SLIDING_WINDOW_BLACKLIST` | `False` | Enable blacklist filtering in exact matching |
+| `SPAN_DISTANCE` | `4` | Maximum token distance between span anchor and trailing token in span matching |
 
 SpaCy matching (`PerformSpacyMatching`) exists in the codebase but is not wired into the default pipeline.
 
@@ -226,22 +257,71 @@ SpaCy matching (`PerformSpacyMatching`) exists in the codebase but is not wired 
 
 ## Tests
 
+### AskOwlAPI / singlequery
+
 | Test File | What It Covers |
 |---|---|
 | [tests/owl/test_ask_owl_api.py](../tests/owl/test_ask_owl_api.py) | `AskOwlAPI` -- labels, predicates, entities, taxonomy queries |
-| [tests/owl/parser/test_mutato_api_01.py](../tests/owl/parser/test_mutato_api_01.py) | `MutatoAPI` with `FindOntologyData` -- basic swap |
-| [tests/owl/parser/test_mutato_api_02.py](../tests/owl/parser/test_mutato_api_02.py) | Span distance configuration via `SPAN_DISTANCE` env var |
-| [tests/owl/parser/test_mutato_api_03.py](../tests/owl/parser/test_mutato_api_03.py) | Span matching -- multi-token entity detection |
-| [tests/owl/parser/test_mutato_api_04.py](../tests/owl/parser/test_mutato_api_04.py) | Pre-loaded spaCy model injection |
-| [tests/owl/parser/test_mutato_api_05.py](../tests/owl/parser/test_mutato_api_05.py) | Bigram span matching and distance thresholds |
-| [tests/owl/parser/test_mutato_api_06.py](../tests/owl/parser/test_mutato_api_06.py) | `MutatoAPI` with pre-computed `FindOntologyJSON` |
-| [tests/owl/parser/test_mutato_api_07.py](../tests/owl/parser/test_mutato_api_07.py) | bNode handling with `FindOntologyJSON` |
-| [tests/owl/parser/test_mutato_api_08.py](../tests/owl/parser/test_mutato_api_08.py) | Punctuation normalization (`/`, `-`) in synonyms |
-| [tests/owl/parser/test_mutato_api_09.py](../tests/owl/parser/test_mutato_api_09.py) | `by_predicate` filtering -- exclusion of `class` key and self-referential values |
-| [tests/owl/parser/test_mutato_api_10.py](../tests/owl/parser/test_mutato_api_10.py) | `AskOwlAPI.equivalents()` -- no spaces in values |
-| [tests/owl/parser/test_mutato_api_11.py](../tests/owl/parser/test_mutato_api_11.py) | Connector words preserved in entity names |
-| [tests/owl/parser/test_mutato_api_12.py](../tests/owl/parser/test_mutato_api_12.py) | Preposition stripping in multi-word entities |
-| [tests/owl/finder/test_generate_plus_spans_1.py](../tests/owl/finder/test_generate_plus_spans_1.py) | `GeneratePlusSpans` -- single span rule expansion |
-| [tests/owl/finder/test_generate_plus_spans_2.py](../tests/owl/finder/test_generate_plus_spans_2.py) | `GeneratePlusSpans` -- multiple anchor patterns |
-| [tests/owl/finder/test_generate_plus_spans_3.py](../tests/owl/finder/test_generate_plus_spans_3.py) | `GeneratePlusSpans` -- overlapping span hierarchies |
-| [tests/owl/finder/test_find_ontology_json_03.py](../tests/owl/finder/test_find_ontology_json_03.py) | `FindOntologyData` (live OWL) integrated with `MutatoAPI` |
+| [tests/owl/test_ask_json_api.py](../tests/owl/test_ask_json_api.py) | `AskJsonAPI` -- all view methods against a pre-generated JSON file |
+| [tests/owl/parser/test_ask_owl_api_equivalents.py](../tests/owl/parser/test_ask_owl_api_equivalents.py) | `AskOwlAPI.equivalents()` -- no spaces in values |
+
+### MutatoAPI with live OWL
+
+| Test File | What It Covers |
+|---|---|
+| [tests/owl/parser/test_mutato_api_owl_basic_swap.py](../tests/owl/parser/test_mutato_api_owl_basic_swap.py) | `MutatoAPI` with `FindOntologyData` -- basic swap |
+| [tests/owl/parser/test_mutato_api_owl_span_distance.py](../tests/owl/parser/test_mutato_api_owl_span_distance.py) | Span distance configuration via `SPAN_DISTANCE` env var |
+| [tests/owl/parser/test_mutato_api_owl_multiword_span.py](../tests/owl/parser/test_mutato_api_owl_multiword_span.py) | Span matching -- multi-token entity detection |
+| [tests/owl/parser/test_mutato_api_owl_span_preposition.py](../tests/owl/parser/test_mutato_api_owl_span_preposition.py) | Preposition stripping in multi-word span entities |
+| [tests/owl/parser/test_mutato_api_owl_negation_span.py](../tests/owl/parser/test_mutato_api_owl_negation_span.py) | Negation span matching |
+| [tests/owl/parser/test_mutato_api_owl_conjunction_span.py](../tests/owl/parser/test_mutato_api_owl_conjunction_span.py) | Connector words preserved in entity names |
+| [tests/owl/parser/test_mutato_api_owl_edge_cases.py](../tests/owl/parser/test_mutato_api_owl_edge_cases.py) | Edge cases -- empty input, unknown tokens, partial matches |
+| [tests/owl/parser/test_mutato_api_owl_medical_sentence.py](../tests/owl/parser/test_mutato_api_owl_medical_sentence.py) | Medical sentence parsing -- realistic clinical text |
+| [tests/owl/parser/test_mutato_api_token_structure.py](../tests/owl/parser/test_mutato_api_token_structure.py) | Swap token structure -- required fields and types |
+| [tests/owl/parser/test_mutato_api_roundtrip.py](../tests/owl/parser/test_mutato_api_roundtrip.py) | OWL-to-JSON roundtrip -- `MDAGenerator` then `FindOntologyJSON` |
+
+### MutatoAPI with pre-computed JSON
+
+| Test File | What It Covers |
+|---|---|
+| [tests/owl/parser/test_mutato_api_json_bnode.py](../tests/owl/parser/test_mutato_api_json_bnode.py) | bNode handling with `FindOntologyJSON` |
+| [tests/owl/parser/test_mutato_api_json_punctuation.py](../tests/owl/parser/test_mutato_api_json_punctuation.py) | Punctuation normalization (`/`, `-`) in synonyms |
+| [tests/owl/parser/test_mutato_api_json_by_predicate.py](../tests/owl/parser/test_mutato_api_json_by_predicate.py) | `by_predicate` filtering -- exclusion of `class` key and self-referential values |
+| [tests/owl/parser/test_mutato_api_json_apostrophe.py](../tests/owl/parser/test_mutato_api_json_apostrophe.py) | Apostrophe normalization in synonym lookup |
+| [tests/owl/parser/test_mutato_api_json_idempotency.py](../tests/owl/parser/test_mutato_api_json_idempotency.py) | Repeated calls with identical input always produce identical output |
+| [tests/owl/parser/test_mutato_api_json_multi_entity.py](../tests/owl/parser/test_mutato_api_json_multi_entity.py) | Multiple entity matches in a single input |
+
+### OWL Schema Detection and Universal Generator
+
+| Test File | What It Covers |
+|---|---|
+| [tests/owl/schema/test_owl_schema_detector.py](../tests/owl/schema/test_owl_schema_detector.py) | `OWLSchemaDetector` -- correct detection across all four patterns, determinism, synthetic edge cases |
+| [tests/owl/schema/test_universal_mda_generator.py](../tests/owl/schema/test_universal_mda_generator.py) | `UniversalMDAGenerator` -- output shape parity with `MDAGenerator` and structural validation for MIXED |
+
+### Econ Skills -- MIXED ontology parsing quality
+
+| Test File | What It Covers |
+|---|---|
+| [tests/owl/parser/test_econ_skills_basic.py](../tests/owl/parser/test_econ_skills_basic.py) | Direct skill detection from `econ-20160218.owl` -- exact match, case invariance, negative cases |
+| [tests/owl/parser/test_econ_skills_spans.py](../tests/owl/parser/test_econ_skills_spans.py) | Span matching with interleaved filler words -- bigram anchor invariant, distance thresholds |
+| [tests/owl/parser/test_econ_skills_sentences.py](../tests/owl/parser/test_econ_skills_sentences.py) | Realistic prose and resume-style sentences -- single and multiple skills per sentence |
+
+### FindOntologyJSON / FindOntologyData
+
+| Test File | What It Covers |
+|---|---|
+| [tests/owl/finder/test_find_ontology_json_hierarchy.py](../tests/owl/finder/test_find_ontology_json_hierarchy.py) | `FindOntologyJSON` hierarchy traversal |
+| [tests/owl/finder/test_find_ontology_json_hierarchy_ops.py](../tests/owl/finder/test_find_ontology_json_hierarchy_ops.py) | `FindOntologyJSON` ancestors, descendants, has_ancestor |
+| [tests/owl/finder/test_find_ontology_json_structure.py](../tests/owl/finder/test_find_ontology_json_structure.py) | `FindOntologyJSON` output structure and required key presence |
+| [tests/owl/finder/test_find_ontology_json_canon_ops.py](../tests/owl/finder/test_find_ontology_json_canon_ops.py) | `FindOntologyJSON` canonical lookup operations |
+| [tests/owl/finder/test_find_ontology_json_from_file.py](../tests/owl/finder/test_find_ontology_json_from_file.py) | `FindOntologyJSON` loaded from a persisted JSON file |
+| [tests/owl/finder/test_find_ontology_data_api.py](../tests/owl/finder/test_find_ontology_data_api.py) | `FindOntologyData` (live OWL) integrated with `MutatoAPI` |
+| [tests/owl/finder/test_find_ontology_data_exact_match.py](../tests/owl/finder/test_find_ontology_data_exact_match.py) | `FindOntologyData` exact match path |
+
+### GeneratePlusSpans
+
+| Test File | What It Covers |
+|---|---|
+| [tests/owl/finder/test_generate_plus_spans_single.py](../tests/owl/finder/test_generate_plus_spans_single.py) | `GeneratePlusSpans` -- single span rule expansion |
+| [tests/owl/finder/test_generate_plus_spans_overlap.py](../tests/owl/finder/test_generate_plus_spans_overlap.py) | `GeneratePlusSpans` -- multiple anchor patterns |
+| [tests/owl/finder/test_generate_plus_spans_complex.py](../tests/owl/finder/test_generate_plus_spans_complex.py) | `GeneratePlusSpans` -- overlapping span hierarchies |

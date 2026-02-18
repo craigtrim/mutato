@@ -16,10 +16,10 @@ results = owl_parse(tokens=["student", "learned", "math"], ontologies=[...])
 
 The parser applies multiple matching passes in order:
 
-1. **Exact** — literal string match against ontology terms
-2. **Span** — multi-token window matching
-3. **Hierarchy** — parent/child concept traversal
-4. **spaCy** — lemma and POS-aware NLP matching
+1. **Exact** : literal string match against ontology terms
+2. **Span** : multi-token window matching
+3. **Hierarchy** : parent/child concept traversal
+4. **spaCy** : lemma and POS-aware NLP matching
 
 ## Installation
 
