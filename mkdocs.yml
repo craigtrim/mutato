@@ -1,0 +1,20 @@
+site_name: mutato
+site_description: OWL ontology-backed synonym swapping for NLP pipelines
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: indigo
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - MDA Pre-Computation: mda-precompute.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - tables
+  - admonition
