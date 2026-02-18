@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+# Issue: https://github.com/craigtrim/mutato/issues/4
 """ AskOwlAPI variant for mixed class/individual OWL ontologies.
 
 In a MIXED ontology, leaf concepts are owl:NamedIndividual with multiple
@@ -7,9 +8,9 @@ rdf:type memberships encoding polyhierarchy, while top-level taxonomy still
 uses owl:Class + rdfs:subClassOf.
 
 Overrides three methods that in the base class assume class-only structure:
-    - children(entity)  — also finds individuals typed as the entity
-    - parents(entity)   — also reads rdf:type for individual parents
-    - ngrams(gram_level) — uses rdfs:label enumeration instead of rdfs:subClassOf
+    - children(entity)   - also finds individuals typed as the entity
+    - parents(entity)    - also reads rdf:type for individual parents
+    - ngrams(gram_level) - uses rdfs:label enumeration instead of rdfs:subClassOf
 """
 
 from functools import lru_cache

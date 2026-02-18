@@ -25,7 +25,7 @@ class TestColorsFinderHierarchy(unittest.TestCase):
         cls.finder = FindOntologyJSON(d_owl=d_owl, ontology_name='colors')
 
     # ------------------------------------------------------------------ #
-    # children() — Color root                                             #
+    # children()  - Color root                                             #
     # ------------------------------------------------------------------ #
 
     def test_color_children_includes_primary(self) -> None:
@@ -47,7 +47,7 @@ class TestColorsFinderHierarchy(unittest.TestCase):
         self.assertIn('Metallic_Color', self.finder.children('Color'))
 
     # ------------------------------------------------------------------ #
-    # children() — Primary colors                                         #
+    # children()  - Primary colors                                         #
     # ------------------------------------------------------------------ #
 
     def test_primary_color_children_includes_red(self) -> None:
@@ -60,7 +60,7 @@ class TestColorsFinderHierarchy(unittest.TestCase):
         self.assertIn('Yellow', self.finder.children('Primary_Color'))
 
     # ------------------------------------------------------------------ #
-    # children() — Secondary colors                                       #
+    # children()  - Secondary colors                                       #
     # ------------------------------------------------------------------ #
 
     def test_secondary_color_children_includes_orange(self) -> None:
@@ -76,7 +76,7 @@ class TestColorsFinderHierarchy(unittest.TestCase):
         self.assertIn('Indigo', self.finder.children('Secondary_Color'))
 
     # ------------------------------------------------------------------ #
-    # children() — Neutral colors                                         #
+    # children()  - Neutral colors                                         #
     # ------------------------------------------------------------------ #
 
     def test_neutral_color_children_includes_black(self) -> None:
@@ -92,7 +92,7 @@ class TestColorsFinderHierarchy(unittest.TestCase):
         self.assertIn('Brown', self.finder.children('Neutral_Color'))
 
     # ------------------------------------------------------------------ #
-    # children() — Warm / Cool / Metallic                                 #
+    # children()  - Warm / Cool / Metallic                                 #
     # ------------------------------------------------------------------ #
 
     def test_warm_color_children_includes_pink(self) -> None:

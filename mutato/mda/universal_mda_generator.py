@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+# Issue: https://github.com/craigtrim/mutato/issues/4
 """ Universal OWL-to-MDA converter with automatic schema detection.
 
 Replaces the need for consumers to manually select a generator based on

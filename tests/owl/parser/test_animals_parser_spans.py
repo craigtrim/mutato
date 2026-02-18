@@ -48,7 +48,7 @@ class TestAnimalsParserSpans(unittest.TestCase):
         return any(s['type'] == 'span' for s in self._swaps(text))
 
     # ------------------------------------------------------------------ #
-    # Span match — isolation (span is the entire input)                   #
+    # Span match  - isolation (span is the entire input)                   #
     # ------------------------------------------------------------------ #
 
     def test_german_shepherd_produces_swap(self) -> None:
@@ -133,7 +133,7 @@ class TestAnimalsParserSpans(unittest.TestCase):
         self.assertGreater(len(swaps), 0)
 
     # ------------------------------------------------------------------ #
-    # Span match — entity embedded in a sentence                          #
+    # Span match  - entity embedded in a sentence                          #
     # ------------------------------------------------------------------ #
 
     def test_german_shepherd_in_sentence(self) -> None:

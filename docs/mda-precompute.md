@@ -8,11 +8,31 @@ The default runtime path loads an OWL file cold on every process start. RDFLib p
 
 `MDAGenerator` walks the ontology once and emits a plain Python dict containing every derived view the matching pipeline needs. Serialize that dict to JSON, commit it alongside your OWL file, and load it at runtime via `FindOntologyJSON` instead of `FindOntologyData`. The RDF layer is never touched again.
 
+If you do not know the structural pattern of your ontology in advance, use `UniversalMDAGenerator` instead. It detects the pattern automatically (`CLASS_BASED`, `MIXED`, `INDIVIDUAL`, or `SKOS`) and routes to the appropriate extraction strategy. The output dict is identical in shape to `MDAGenerator.generate()`. See [architecture.md](architecture.md) for the detection algorithm.
+
 ---
 
 ## Step 1 -- Generate the Static File
 
-Run this once whenever the OWL file changes:
+Run this once whenever the OWL file changes.
+
+Use `UniversalMDAGenerator` when the ontology structure is not known in advance (recommended):
+
+```python
+import json
+from mutato.mda import UniversalMDAGenerator
+
+d_mda = UniversalMDAGenerator(
+    ontology_name="my_ontology",
+    absolute_path="/path/to/owl/files",
+    namespace="http://example.org/my_ontology#"
+).generate()
+
+with open("/path/to/owl/files/my_ontology.json", "w") as f:
+    json.dump(d_mda, f, indent=2)
+```
+
+Use `MDAGenerator` directly when you know the ontology uses a `CLASS_BASED` pattern:
 
 ```python
 import json
@@ -68,7 +88,7 @@ finder = FindOntologyJSON(
     ontology_name="my_ontology"
 )
 
-api = MutatoAPI(finder=finder)
+api = MutatoAPI(find_ontology_data=finder)
 results = api.swap_input_tokens(tokens)
 ```
 
@@ -88,8 +108,8 @@ You can wire this into your build with a dedicated Makefile target:
 mda:
 	poetry run python -c "\
 	import json; \
-	from mutato.mda import MDAGenerator; \
-	d = MDAGenerator('my_ontology', './resources/ontologies', 'http://example.org/my_ontology#').generate(); \
+	from mutato.mda import UniversalMDAGenerator; \
+	d = UniversalMDAGenerator('my_ontology', './resources/ontologies', 'http://example.org/my_ontology#').generate(); \
 	json.dump(d, open('./resources/ontologies/my_ontology.json', 'w'), indent=2)"
 ```
 
@@ -151,5 +171,11 @@ For true multi-ontology merging at the `FindOntologyData` level, the live OWL pa
 | [tests/owl/test_ask_json_api.py](../tests/owl/test_ask_json_api.py) | `AskJsonAPI` -- all view methods against a pre-generated JSON file |
 | [tests/owl/finder/test_mda_generator_medicopilot.py](../tests/owl/finder/test_mda_generator_medicopilot.py) | `MDAGenerator.generate()` output keys and JSON serialization |
 | [tests/owl/finder/test_mda_generator_courses.py](../tests/owl/finder/test_mda_generator_courses.py) | `MDAGenerator.generate()` against a courses ontology |
-| [tests/owl/finder/test_find_ontology_json_01.py](../tests/owl/finder/test_find_ontology_json_01.py) | `FindOntologyJSON` full API surface -- predicates, labels, taxonomy |
-| [tests/owl/finder/test_find_ontology_json_02.py](../tests/owl/finder/test_find_ontology_json_02.py) | `FindOntologyJSON` + `MutatoAPI` end-to-end swap via pre-computed JSON |
+| [tests/owl/finder/test_mda_generator_output_schema.py](../tests/owl/finder/test_mda_generator_output_schema.py) | `MDAGenerator` output schema -- all required keys and types |
+| [tests/owl/finder/test_mda_generator_synonym_consistency.py](../tests/owl/finder/test_mda_generator_synonym_consistency.py) | `MDAGenerator` synonym forward/reverse consistency |
+| [tests/owl/finder/test_mda_generator_hierarchy_consistency.py](../tests/owl/finder/test_mda_generator_hierarchy_consistency.py) | `MDAGenerator` children/parents hierarchy consistency |
+| [tests/owl/mda/test_animals_mda_schema.py](../tests/owl/mda/test_animals_mda_schema.py) | `MDAGenerator` output schema against animals-test.owl |
+| [tests/owl/mda/test_music_mda_schema.py](../tests/owl/mda/test_music_mda_schema.py) | `MDAGenerator` output schema against music-test.owl -- deep hierarchy and altLabels |
+| [tests/owl/schema/test_universal_mda_generator.py](../tests/owl/schema/test_universal_mda_generator.py) | `UniversalMDAGenerator` -- output shape parity with `MDAGenerator`, MIXED schema structural validation |
+| [tests/owl/finder/test_find_ontology_json_structure.py](../tests/owl/finder/test_find_ontology_json_structure.py) | `FindOntologyJSON` output structure and required key presence |
+| [tests/owl/finder/test_find_ontology_json_from_file.py](../tests/owl/finder/test_find_ontology_json_from_file.py) | `FindOntologyJSON` loaded from a persisted JSON file |

@@ -35,7 +35,7 @@ class TestMusicMDASchema(unittest.TestCase):
             self.assertIn(key, self.d_owl, f'Missing key: {key}')
 
     # ------------------------------------------------------------------ #
-    # children — deep hierarchy                                           #
+    # children  - deep hierarchy                                           #
     # ------------------------------------------------------------------ #
 
     def test_children_music_topic_includes_instrument(self) -> None:
@@ -74,7 +74,7 @@ class TestMusicMDASchema(unittest.TestCase):
         self.assertIn('Grand_Piano', children['Piano'])
 
     # ------------------------------------------------------------------ #
-    # parents — deep hierarchy                                            #
+    # parents  - deep hierarchy                                            #
     # ------------------------------------------------------------------ #
 
     def test_parents_electric_guitar_includes_guitar(self) -> None:
@@ -93,7 +93,7 @@ class TestMusicMDASchema(unittest.TestCase):
         self.assertIn('Jazz', parents['Bebop'])
 
     # ------------------------------------------------------------------ #
-    # ngrams — multi-word label coverage                                  #
+    # ngrams  - multi-word label coverage                                  #
     # ------------------------------------------------------------------ #
 
     def test_ngrams_bigrams_includes_electric_guitar(self) -> None:
@@ -117,7 +117,7 @@ class TestMusicMDASchema(unittest.TestCase):
         self.assertIn('hip_hop', bigrams)
 
     # ------------------------------------------------------------------ #
-    # spans — multi-word first-token coverage                             #
+    # spans  - multi-word first-token coverage                             #
     # ------------------------------------------------------------------ #
 
     def test_spans_contains_electric_token(self) -> None:
@@ -133,7 +133,7 @@ class TestMusicMDASchema(unittest.TestCase):
         self.assertIn('heavy', span_keys)
 
     # ------------------------------------------------------------------ #
-    # synonyms — altLabel coverage                                        #
+    # synonyms  - altLabel coverage                                        #
     # ------------------------------------------------------------------ #
 
     def test_synonyms_fwd_guitar_has_axe(self) -> None:
@@ -161,7 +161,7 @@ class TestMusicMDASchema(unittest.TestCase):
         self.assertGreater(len(self.d_owl['synonyms']['rev']), 0)
 
     # ------------------------------------------------------------------ #
-    # ner — all values constant                                           #
+    # ner  - all values constant                                           #
     # ------------------------------------------------------------------ #
 
     def test_ner_all_values_are_ner_label(self) -> None:

@@ -27,7 +27,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         cls.finder = FindOntologyJSON(d_owl=d_owl, ontology_name='music')
 
     # ------------------------------------------------------------------ #
-    # children() — Music_Topic root                                       #
+    # children()  - Music_Topic root                                       #
     # ------------------------------------------------------------------ #
 
     def test_music_topic_children_includes_instrument(self) -> None:
@@ -40,7 +40,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         self.assertIn('Concept', self.finder.children('Music_Topic'))
 
     # ------------------------------------------------------------------ #
-    # children() — Instrument families                                    #
+    # children()  - Instrument families                                    #
     # ------------------------------------------------------------------ #
 
     def test_instrument_children_includes_string(self) -> None:
@@ -56,7 +56,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         self.assertIn('Keyboard_Instrument', self.finder.children('Instrument'))
 
     # ------------------------------------------------------------------ #
-    # children() — String instruments                                     #
+    # children()  - String instruments                                     #
     # ------------------------------------------------------------------ #
 
     def test_string_instrument_children_includes_guitar(self) -> None:
@@ -81,7 +81,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         self.assertIn('Bass_Guitar', self.finder.children('Guitar'))
 
     # ------------------------------------------------------------------ #
-    # children() — Wind instruments                                       #
+    # children()  - Wind instruments                                       #
     # ------------------------------------------------------------------ #
 
     def test_wind_instrument_children_includes_flute(self) -> None:
@@ -100,7 +100,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         self.assertIn('Tenor_Saxophone', self.finder.children('Saxophone'))
 
     # ------------------------------------------------------------------ #
-    # children() — Percussion                                             #
+    # children()  - Percussion                                             #
     # ------------------------------------------------------------------ #
 
     def test_percussion_children_includes_drum(self) -> None:
@@ -116,7 +116,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         self.assertIn('Bass_Drum', self.finder.children('Drum'))
 
     # ------------------------------------------------------------------ #
-    # children() — Keyboard instruments                                   #
+    # children()  - Keyboard instruments                                   #
     # ------------------------------------------------------------------ #
 
     def test_keyboard_children_includes_piano(self) -> None:
@@ -135,7 +135,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         self.assertIn('Upright_Piano', self.finder.children('Piano'))
 
     # ------------------------------------------------------------------ #
-    # children() — Genres                                                 #
+    # children()  - Genres                                                 #
     # ------------------------------------------------------------------ #
 
     def test_genre_children_includes_jazz(self) -> None:
@@ -166,7 +166,7 @@ class TestMusicFinderHierarchy(unittest.TestCase):
         self.assertIn('Punk_Rock', self.finder.children('Rock_Music'))
 
     # ------------------------------------------------------------------ #
-    # children() — Concepts                                               #
+    # children()  - Concepts                                               #
     # ------------------------------------------------------------------ #
 
     def test_concept_children_includes_melody(self) -> None:

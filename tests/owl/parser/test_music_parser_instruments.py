@@ -39,7 +39,7 @@ class TestMusicParserInstruments(unittest.TestCase):
         return [s['canon'] for s in self._swaps(text)]
 
     # ------------------------------------------------------------------ #
-    # String instruments — exact match                                     #
+    # String instruments  - exact match                                     #
     # ------------------------------------------------------------------ #
 
     def test_guitar_exact_match(self) -> None:
@@ -64,7 +64,7 @@ class TestMusicParserInstruments(unittest.TestCase):
         self.assertIn('mandolin', self._canons('Mandolin'))
 
     # ------------------------------------------------------------------ #
-    # Wind instruments — exact match                                       #
+    # Wind instruments  - exact match                                       #
     # ------------------------------------------------------------------ #
 
     def test_flute_exact_match(self) -> None:
@@ -95,7 +95,7 @@ class TestMusicParserInstruments(unittest.TestCase):
         self.assertIn('bassoon', self._canons('Bassoon'))
 
     # ------------------------------------------------------------------ #
-    # Percussion — exact match                                             #
+    # Percussion  - exact match                                             #
     # ------------------------------------------------------------------ #
 
     def test_drum_exact_match(self) -> None:
@@ -117,7 +117,7 @@ class TestMusicParserInstruments(unittest.TestCase):
         self.assertIn('timpani', self._canons('Timpani'))
 
     # ------------------------------------------------------------------ #
-    # Keyboard instruments — exact match                                   #
+    # Keyboard instruments  - exact match                                   #
     # ------------------------------------------------------------------ #
 
     def test_piano_exact_match(self) -> None:

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+# Issue: https://github.com/craigtrim/mutato/issues/4
+# Docs: docs/architecture.md
 # Tests OWLSchemaDetector against all four test ontologies and econ.owl.
 # Verifies deterministic, correct schema detection with zero consumer config.
 
@@ -49,7 +51,7 @@ class TestOWLSchemaDetector(unittest.TestCase):
         self.assertIsInstance(schema, OWLSchema)
 
     # ------------------------------------------------------------------ #
-    # Correct detection — controlled vocabulary ontologies                 #
+    # Correct detection  - controlled vocabulary ontologies                 #
     # ------------------------------------------------------------------ #
 
     def test_animals_detected_as_class_based(self) -> None:
@@ -69,7 +71,7 @@ class TestOWLSchemaDetector(unittest.TestCase):
         self.assertEqual(schema, OWLSchema.CLASS_BASED)
 
     # ------------------------------------------------------------------ #
-    # Correct detection — mixed class/individual ontology                  #
+    # Correct detection  - mixed class/individual ontology                  #
     # ------------------------------------------------------------------ #
 
     def test_econ_detected_as_mixed(self) -> None:
@@ -89,7 +91,7 @@ class TestOWLSchemaDetector(unittest.TestCase):
         self.assertNotEqual(schema, OWLSchema.INDIVIDUAL)
 
     # ------------------------------------------------------------------ #
-    # Determinism — same graph always returns same schema                  #
+    # Determinism  - same graph always returns same schema                  #
     # ------------------------------------------------------------------ #
 
     def test_animals_detection_is_deterministic(self) -> None:
