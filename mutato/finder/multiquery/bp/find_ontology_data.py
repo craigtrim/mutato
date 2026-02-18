@@ -255,7 +255,7 @@ class FindOntologyData(object):
 
         def update(query_results: list | None):
             if query_results:
-                [results.append(x) for x in query_results]
+                results.extend(query_results)
 
         update(query(input_text))
         for parent in self.parents(input_text):
@@ -294,7 +294,7 @@ class FindOntologyData(object):
         """
         return self._by_predicate('effects')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def effects_rev(self) -> dict:
         """ Find Effected By relationships
 
@@ -307,7 +307,7 @@ class FindOntologyData(object):
         """
         return self._by_predicate_rev('effects')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def requires(self) -> dict:
         """ Find Requires Relationships
 
@@ -320,7 +320,7 @@ class FindOntologyData(object):
         """
         return self._by_predicate('requires')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def required_by(self) -> dict:
         """ Find Required By relationships
 
@@ -335,7 +335,7 @@ class FindOntologyData(object):
 
     def requires_by_entity(self,
                            input_text: str) -> list | None:
-        """ Retrict Requires Relationship to a Single Entity
+        """ Restrict Requires Relationship to a Single Entity
 
         Args:
             input_text (str): the entity to search for
@@ -349,7 +349,7 @@ class FindOntologyData(object):
 
     def required_by_entity(self,
                            input_text: str) -> list | None:
-        """ Retrict Required-By Relationship to a Single Entity
+        """ Restrict Required-By Relationship to a Single Entity
 
         Args:
             input_text (str): the entity to search for
@@ -361,7 +361,7 @@ class FindOntologyData(object):
         if self.required_by() and input_text in self.required_by():
             return self.required_by()[input_text]
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def similar(self) -> dict:
         """ Find Similar Relationships
 
@@ -370,11 +370,11 @@ class FindOntologyData(object):
             Return      ?a : [?b]
 
         Returns:
-            list | None: a list of zero-or-more entities that the incoming entity is similar to
+            dict: entities mapped to zero-or-more similar entities
         """
         return self._by_predicate('similarTo')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def similar_rev(self) -> dict:
         """ Find Similar Inverse Relationships
 
@@ -383,8 +383,8 @@ class FindOntologyData(object):
             Return      ?b : [?a]
 
         Returns:
-            list | None: a list of zero-or-more entities that the incoming entity is similar to
-       """
+            dict: entities mapped to zero-or-more similar entities (reverse direction)
+        """
         return self._by_predicate_rev('similarTo')
 
     def similar_by_entity(self,
@@ -411,14 +411,14 @@ class FindOntologyData(object):
         input_text = self._to_entity_name(input_text)
 
         if self.similar() and input_text in self.similar():
-            [results.append(x) for x in self.similar()[input_text]]
+            results.extend(self.similar()[input_text])
 
         if self.similar_rev() and input_text in self.similar_rev():
-            [results.append(x) for x in self.similar_rev()[input_text]]
+            results.extend(self.similar_rev()[input_text])
 
         return results
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def implies(self) -> dict:
         """ Find Implied Relationships
 
@@ -427,14 +427,14 @@ class FindOntologyData(object):
             Return      ?a : [?b]
 
         Returns:
-            list | None: a list of zero-or-more entities that the incoming entity implies
+            dict: entities mapped to zero-or-more entities they imply
         """
         return self._by_predicate('implies')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def implies_by_entity(self,
                           input_text: str) -> dict:
-        """ Retrict Implies Relationship to a Single Entity
+        """ Restrict Implies Relationship to a Single Entity
 
         Args:
             input_text (str): the entity to search for
@@ -446,7 +446,7 @@ class FindOntologyData(object):
         if self.implies() and input_text in self.implies():
             return self.implies()[input_text]
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def implied_by(self) -> dict:
         """ Find Implied By relationships
 
@@ -455,14 +455,14 @@ class FindOntologyData(object):
             Return  ?b : [?a]
 
         Returns:
-            list | None: a list of zero-or-more entities that are implied by this entity
+            dict: entities mapped to zero-or-more entities that imply them
         """
         return self._by_predicate_rev('implies')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def implied_by_entity(self,
                           input_text: str) -> dict:
-        """ Retrict Implied By Relationship to a Single Entity
+        """ Restrict Implied By Relationship to a Single Entity
 
         Args:
             input_text (str): the entity to search for
@@ -539,42 +539,42 @@ class FindOntologyData(object):
         return svc.find_ner(input_text)
 
     # TODO:  Find a way to fix this
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def graffl_ner(self) -> dict:
         return dict()
         # return self._query_ner_label('grafflNER')
 
     # TODO:  Find a way to fix this
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def graffl_ner_rev(self) -> dict:
         return dict()
         # return self._query_ner_label('grafflNER', reverse=True)
 
     # TODO:  Find a way to fix this
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def spacy_ner(self) -> dict:
         return dict()
         # return self._query_ner_label('spacyNER')
 
     # TODO:  Find a way to fix this
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def spacy_ner_rev(self) -> dict:
         return dict()
         # return self._query_ner_label('spacyNER', reverse=True)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def ner_depth(self) -> dict:
         return self._query_ner_depth(reverse=False)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def ner_depth_rev(self) -> dict:
         return self._query_ner_depth(reverse=True)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def infer_by_requires(self) -> dict:
         raise NotImplementedError
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def labels(self, force_lowercase: bool = True) -> dict | None:
         """Find all the Labels keyed by Entity Name
 
@@ -595,7 +595,7 @@ class FindOntologyData(object):
 
         return d
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def labels_rev(self, force_lowercase: bool = True) -> dict | None:
         """Find all the Entity Names keyed by Label
 
@@ -637,11 +637,11 @@ class FindOntologyData(object):
             if results and len(results):
                 return results[0]
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def ner_taxonomy(self) -> dict:
         return self._query_ner_taxo(reverse=False)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def ner_taxonomy_rev(self) -> dict:
         return self._query_ner_taxo(reverse=True)
 
@@ -690,7 +690,7 @@ class FindOntologyData(object):
         """
         return self.spans() and len(self.spans())
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def spans(self) -> dict:
         results = []
         for ontology_name in self._d_ontologies:
@@ -703,7 +703,7 @@ class FindOntologyData(object):
 
         return self._merge(results, QueryResultType.DICT_OF_STR2DICT)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def span_keys(self) -> list | None:
         """ Return Span Keys sorted by Length
 
@@ -730,7 +730,7 @@ class FindOntologyData(object):
         """
         return self._load_synonyms.synonyms_rev()
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def trie(self) -> dict:
         results = []
         for ontology_name in self._d_ontologies:
@@ -742,23 +742,23 @@ class FindOntologyData(object):
             return results[0]
         return self._merge(results, QueryResultType.DICT_OF_STR2LIST)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def types(self) -> dict:
         return self._by_predicate('rdfs:subClassOf')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def types_rev(self) -> dict:
         return self._by_predicate_rev('rdfs:subClassOf')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def uses(self) -> dict:
         return self._by_predicate('uses')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def uses_rev(self) -> dict:
         return self._by_predicate_rev('uses')
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def has_parent(self,
                    input_text: str,
                    parent: str) -> bool:
@@ -775,7 +775,7 @@ class FindOntologyData(object):
             parent=parent,
             input_text=input_text)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def has_ancestor(self,
                      input_text: str,
                      parent: str) -> bool:
@@ -792,7 +792,7 @@ class FindOntologyData(object):
             parent=parent,
             input_text=input_text)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def entity_exists(self,
                       input_text: str) -> bool:
         """ Simple Truth check
@@ -806,7 +806,7 @@ class FindOntologyData(object):
         """
         return self._find_types.exists(input_text)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def children(self,
                  input_text: str) -> list[str]:
         """ Return the Children for an Entity
@@ -823,7 +823,7 @@ class FindOntologyData(object):
         self._type_check(input_text)
         return self._sort_list(self._find_types.children(input_text))
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def children_and_self(self,
                           input_text: str) -> list[str]:
         """ Return the Children for an Entity,
@@ -850,7 +850,7 @@ class FindOntologyData(object):
         results.append(input_text)
         return self._sort_list(results)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def descendants(self,
                     input_text: str) -> list:
         """ Return the Descendants for an Entity
@@ -867,7 +867,7 @@ class FindOntologyData(object):
         self._type_check(input_text)
         return self._find_types.descendants(input_text)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def descendants_and_self(self,
                              input_text: str) -> list:
         """ Return the Descendants for an Entity,
@@ -894,7 +894,7 @@ class FindOntologyData(object):
         results.append(input_text)
         return self._sort_list(results)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def parents(self,
                 input_text: str) -> list:
         """ Return the Parents for an Entity
@@ -911,7 +911,7 @@ class FindOntologyData(object):
         self._type_check(input_text)
         return self._find_types.parents(input_text)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def parents_and_self(self,
                          input_text: str) -> list:
         """ Return the Parents for an Entity,
@@ -938,7 +938,7 @@ class FindOntologyData(object):
         results.append(input_text)
         return self._sort_list(results)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def ancestors(self,
                   input_text: str) -> list:
         """ Return the Ancestors for an Entity
@@ -955,7 +955,7 @@ class FindOntologyData(object):
         self._type_check(input_text)
         return self._sort_list(self._find_types.ancestors(input_text))
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def ancestors_and_self(self,
                            input_text: str) -> list:
         """ Return the Ancestors for an Entity,
@@ -982,7 +982,7 @@ class FindOntologyData(object):
         results.append(input_text)
         return self._sort_list(results)
 
-    @lru_cache
+    @lru_cache(maxsize=1024)
     def lookup(self) -> dict | None:
         """ Generate n-Gram Spans suitable for Synonym Matching
 

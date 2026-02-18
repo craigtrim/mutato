@@ -7,10 +7,22 @@ theme:
     scheme: slate
     primary: indigo
 
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_root_heading: true
+            show_category_heading: true
+            docstring_style: google
+
 nav:
   - Home: index.md
   - Architecture: architecture.md
   - MDA Pre-Computation: mda-precompute.md
+  - API Reference: api.md
 
 markdown_extensions:
   - pymdownx.highlight:
