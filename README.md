@@ -2,10 +2,10 @@
 
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://www.python.org)
 [![Version](https://img.shields.io/badge/version-0.5.22-informational)](https://github.com/Maryville-University-DLX/transcriptiq)
-[![Status](https://img.shields.io/badge/status-beta-yellow)](https://github.com/Maryville-University-DLX/transcriptiq)
-[![License](https://img.shields.io/badge/license-proprietary-red)](LICENSE)
-[![Built with Poetry](https://img.shields.io/badge/built%20with-poetry-blueviolet)](https://python-poetry.org)
-[![spaCy](https://img.shields.io/badge/NLP-spaCy%203.8-09a3d5)](https://spacy.io)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Monthly Downloads](https://img.shields.io/pypi/dm/mutato)](https://pypi.org/project/mutato/)
+[![Total Downloads](https://static.pepy.tech/badge/mutato)](https://pepy.tech/project/mutato)
+[![Tests](https://img.shields.io/badge/tests-961-brightgreen)](tests/)
 
 Ontology-driven synonym swapping for semantic text enrichment. Mutato identifies terms in input text and replaces them with semantically equivalent synonyms sourced from OWL ontologies, enabling consistent, structured analysis of natural language content.
 
