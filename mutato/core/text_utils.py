@@ -6,10 +6,24 @@ from os import sep
 from typing import List
 from statistics import mean
 from typing import Optional
-    from unicodedata import category
-        from itertools import product
+from itertools import product
 
+try:
+    from unicodedata import category
+except ImportError:
     from unicodedata2 import category
+
+STOPWORDS = [
+    'a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor',
+    'on', 'at', 'to', 'from', 'by', 'in', 'of', 'is',
+    'as', 'into', 'with', 'within', 'via'
+]
+
+
+class TextUtils(object):
+
+    @staticmethod
+    def cartesian(matches: list) -> list:
 
         cartesian = []
         for element in product(*matches):
