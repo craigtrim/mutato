@@ -15,7 +15,7 @@ class TestSpanGeneration(unittest.TestCase):
     def tearDown(self) -> None:
         self.generate = None
 
-    def generate(self) -> None:
+    def test_generate(self) -> None:
 
         result = self.generate({
             "penetrating_eye_trauma":
