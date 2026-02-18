@@ -19,7 +19,7 @@ class DataTypeNotExpectedError(Exception):
                  expected_type: object):
         message = '\n'.join([
             'Data Type Not Expected',
-            f'\tActual Value: {expected_type}',
+            f'\tActual Value: {actual_value}',
             f'\tActual Type: {type(actual_value)}',
             f'\tExpected Type: {expected_type}'])
         super().__init__(message)
@@ -38,8 +38,8 @@ class ContentNotExpectedError(Exception):
                  expected_content: object):
         message = '\n'.join([
             'Data Content Not Expected',
-            f'\tExpected Content: {actual_content}',
-            f'\tActual Content: {type(expected_content)}'])
+            f'\tActual Content: {actual_content}',
+            f'\tExpected Content: {expected_content}'])
         super().__init__(message)
 
 
@@ -544,14 +544,20 @@ class Enforcer(object):
             ContentNotExpectedError: object is non-null
         """
         if value is not None:
-            raise ContentNotExpectedError(actual_value=value,
-                                          expected_type='None')
+            raise ContentNotExpectedError(actual_content=value,
+                                          expected_content='None')
 
     @classmethod
     def is_json(cls,
-                value: object) -> None:
-        if Enforcer.is_dict(value=value, display=False):
+                value: object) -> bool:
+        try:
+            Enforcer.is_dict(value=value, display=False)
             return True
-        if Enforcer.is_list(value=value, display=False):
+        except DataTypeNotExpectedError:
+            pass
+        try:
+            Enforcer.is_list(value=value, display=False)
             return True
+        except DataTypeNotExpectedError:
+            pass
         return False
