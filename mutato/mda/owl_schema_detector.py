@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+# Issue: https://github.com/craigtrim/mutato/issues/4
 """ Auto-detect the structural pattern of an OWL ontology graph """
 
 from rdflib import Graph, RDF, OWL
@@ -11,13 +12,13 @@ from mutato.core import configure_logging
 
 class OWLSchemaDetector:
     """ Runs lightweight SPARQL probes against an rdflib Graph to determine
-    which OWL structural pattern is in use — without any consumer configuration.
+    which OWL structural pattern is in use, without any consumer configuration.
 
     Detection priority (first match wins):
-        1. skos:Concept triples present → SKOS
-        2. owl:NamedIndividual + rdfs:subClassOf both present → MIXED
-        3. owl:NamedIndividual present, no rdfs:subClassOf → INDIVIDUAL
-        4. Otherwise → CLASS_BASED
+        1. skos:Concept triples present -> SKOS
+        2. owl:NamedIndividual + rdfs:subClassOf both present -> MIXED
+        3. owl:NamedIndividual present, no rdfs:subClassOf -> INDIVIDUAL
+        4. Otherwise -> CLASS_BASED
     """
 
     def __init__(self, graph: Graph):
