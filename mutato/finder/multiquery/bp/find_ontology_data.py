@@ -7,11 +7,10 @@ from functools import lru_cache
 from collections import defaultdict
 
 from mutato.finder.multiquery.dmo import (
+    ModelResultMerge,
+    ViewGeneratorLookup
+)
 from mutato.finder.multiquery.svc import (
-from mutato.finder.singlequery.bp import AskOwlAPI
-from mutato.finder.singlequery.dto import QueryResultType
-from mutato.core import configure_logging, Enforcer, isEnabledForDebug
-
     FindNER,
     FindSynonyms,
     FindTypes,
@@ -21,6 +20,9 @@ from mutato.core import configure_logging, Enforcer, isEnabledForDebug
     QueryNerLabel,
     QueryNerTaxo
 )
+from mutato.finder.singlequery.bp import AskOwlAPI
+from mutato.finder.singlequery.dto import QueryResultType
+from mutato.core import configure_logging, Enforcer, isEnabledForDebug
 
 
 class FindOntologyData(object):
