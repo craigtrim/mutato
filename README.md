@@ -41,6 +41,24 @@ make build       # install + test + poetry build
 make freeze      # export requirements.txt
 ```
 
+## CLI
+
+The `parse` command parses input text against an OWL ontology and prints canonical forms:
+
+```bash
+poetry run parse --ontology path/to/ontology.owl --input-text "fiscal policy analysis"
+```
+
+Three modes are available:
+
+| Mode | Flag | Effect |
+|---|---|---|
+| Cached (default) | none | Load JSON snapshot; build it on first run |
+| Rebuild cache | `--force-cache` | Regenerate snapshot, then parse |
+| Live OWL | `--live` | Parse directly from the OWL file; no cache |
+
+See [docs/cli.md](docs/cli.md) for the full reference, including the MIXED-schema caveat for `--live`.
+
 ## Architecture
 
 Mutato is organized into four modules:

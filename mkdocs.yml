@@ -21,6 +21,7 @@ plugins:
 nav:
   - Home: index.md
   - Architecture: architecture.md
+  - CLI Reference: cli.md
   - MDA Pre-Computation: mda-precompute.md
   - API Reference: api.md
 
