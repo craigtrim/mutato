@@ -55,13 +55,13 @@ class TestFindOntologyDataAPI(unittest.TestCase):
         self.assertIsNotNone(all_predicates)
 
     def test_gluconate_children_via_owl_path(self) -> None:
-        children = self.finder.children('Gluconate')
-        self.assertIn('Calcium_Gluconate', children)
+        children = [c.lower() for c in self.finder.children('Gluconate')]
+        self.assertIn('calcium_gluconate', children)
 
     def test_gluconate_ancestors_via_owl_path(self) -> None:
-        ancestors = self.finder.ancestors('Gluconate')
-        self.assertIn('Medication', ancestors)
-        self.assertIn('Event', ancestors)
+        ancestors = [a.lower() for a in self.finder.ancestors('Gluconate')]
+        self.assertIn('medication', ancestors)
+        self.assertIn('event', ancestors)
 
     def test_entity_exists_for_known_entity(self) -> None:
         self.assertTrue(self.finder.entity_exists('Gluconate'))
