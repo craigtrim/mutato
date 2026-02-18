@@ -1,6 +1,6 @@
 [project]
 name = "mutato"
-version = "0.5.22"
+version = "0.5.23"
 description = "Mutato Synonym Swapping API"
 readme = "README.md"
 license = { text = "MIT" }

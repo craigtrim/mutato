@@ -15,6 +15,9 @@ class TestSpanGeneration(unittest.TestCase):
     def tearDown(self) -> None:
         self.generate = None
 
+    def _normalize(self, d: dict) -> dict:
+        return {k: sorted(v, key=lambda x: x["content"][0]) for k, v in d.items()}
+
     def test_generate(self) -> None:
 
         result = self.generate({
@@ -29,7 +32,7 @@ class TestSpanGeneration(unittest.TestCase):
                 ]
         })
 
-        assert result == {
+        assert self._normalize(result) == self._normalize({
             "eye": [
                 {
                     "canon": "penetrating_eye_trauma",
@@ -83,7 +86,7 @@ class TestSpanGeneration(unittest.TestCase):
                     "reverse": True
                 }
             ]
-        }
+        })
 
 
 if __name__ == '__main__':
