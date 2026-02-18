@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+# Issue: https://github.com/craigtrim/mutato/issues/4
+# Docs: docs/mda-precompute.md
 # Tests UniversalMDAGenerator against class-based and mixed OWL ontologies.
 # Verifies auto-detection, correct output shape, and parity with MDAGenerator.
 
@@ -40,7 +42,7 @@ class TestUniversalMDAGeneratorAnimals(unittest.TestCase):
         ).generate()
 
     # ------------------------------------------------------------------ #
-    # Output shape — all required keys present                            #
+    # Output shape  - all required keys present                            #
     # ------------------------------------------------------------------ #
 
     def test_has_children_key(self) -> None:
@@ -267,7 +269,7 @@ class TestUniversalMDAGeneratorEcon(unittest.TestCase):
         self.assertIsInstance(self.d_owl['by_predicate'], dict)
 
     # ------------------------------------------------------------------ #
-    # Hierarchy integrity — children/parents are complementary           #
+    # Hierarchy integrity  - children/parents are complementary           #
     # ------------------------------------------------------------------ #
 
     def test_children_keys_are_strings(self) -> None:

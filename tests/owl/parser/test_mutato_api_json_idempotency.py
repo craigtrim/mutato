@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 # Verifies that repeated calls with identical input always produce identical output.
 # Also checks that the ctr (recursion counter) parameter does not change results
-# for well-established entities — only that recursion stops at ctr >= 2.
+# for well-established entities  - only that recursion stops at ctr >= 2.
 
 import os
 import json

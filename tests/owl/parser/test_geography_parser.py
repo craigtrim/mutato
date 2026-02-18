@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 # Tests exact, altLabel, and span matching against the geography-test ontology.
-# Exercises countries, cities, continents, landmarks, and oceans — including
+# Exercises countries, cities, continents, landmarks, and oceans  - including
 # common abbreviations (USA, UK, NYC, LA) and multi-word geographic spans.
 
 import os
@@ -39,7 +39,7 @@ class TestGeographyParser(unittest.TestCase):
         return [s['canon'] for s in self._swaps(text)]
 
     # ------------------------------------------------------------------ #
-    # Countries — exact match                                              #
+    # Countries  - exact match                                              #
     # ------------------------------------------------------------------ #
 
     def test_france_exact_match(self) -> None:
@@ -76,7 +76,7 @@ class TestGeographyParser(unittest.TestCase):
         self.assertIn('argentina', self._canons('Argentina'))
 
     # ------------------------------------------------------------------ #
-    # Cities — exact match                                                 #
+    # Cities  - exact match                                                 #
     # ------------------------------------------------------------------ #
 
     def test_london_exact_match(self) -> None:
@@ -104,7 +104,7 @@ class TestGeographyParser(unittest.TestCase):
         self.assertIn('rome', self._canons('Rome'))
 
     # ------------------------------------------------------------------ #
-    # Continents — exact match                                             #
+    # Continents  - exact match                                             #
     # ------------------------------------------------------------------ #
 
     def test_europe_exact_match(self) -> None:

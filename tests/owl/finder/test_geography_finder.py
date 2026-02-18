@@ -25,7 +25,7 @@ class TestGeographyFinder(unittest.TestCase):
         cls.finder = FindOntologyJSON(d_owl=d_owl, ontology_name='geography')
 
     # ------------------------------------------------------------------ #
-    # children() — Geographic_Region root                                 #
+    # children()  - Geographic_Region root                                 #
     # ------------------------------------------------------------------ #
 
     def test_region_children_includes_continent(self) -> None:
@@ -47,7 +47,7 @@ class TestGeographyFinder(unittest.TestCase):
         self.assertIn('Mountain', self.finder.children('Geographic_Region'))
 
     # ------------------------------------------------------------------ #
-    # children() — Continent                                              #
+    # children()  - Continent                                              #
     # ------------------------------------------------------------------ #
 
     def test_continent_children_includes_north_america(self) -> None:
@@ -69,7 +69,7 @@ class TestGeographyFinder(unittest.TestCase):
         self.assertIn('Antarctica', self.finder.children('Continent'))
 
     # ------------------------------------------------------------------ #
-    # children() — Country                                                #
+    # children()  - Country                                                #
     # ------------------------------------------------------------------ #
 
     def test_country_children_includes_united_states(self) -> None:
@@ -94,7 +94,7 @@ class TestGeographyFinder(unittest.TestCase):
         self.assertIn('Brazil', self.finder.children('Country'))
 
     # ------------------------------------------------------------------ #
-    # children() — City                                                   #
+    # children()  - City                                                   #
     # ------------------------------------------------------------------ #
 
     def test_city_children_includes_new_york(self) -> None:
@@ -116,7 +116,7 @@ class TestGeographyFinder(unittest.TestCase):
         self.assertIn('Beijing', self.finder.children('City'))
 
     # ------------------------------------------------------------------ #
-    # children() — Landmark, Ocean, Mountain                              #
+    # children()  - Landmark, Ocean, Mountain                              #
     # ------------------------------------------------------------------ #
 
     def test_landmark_children_includes_eiffel_tower(self) -> None:
@@ -232,7 +232,7 @@ class TestGeographyFinder(unittest.TestCase):
         self.assertIn('Mount_Everest', self.finder.descendants('Geographic_Region'))
 
     # ------------------------------------------------------------------ #
-    # synonyms() — altLabel surface                                       #
+    # synonyms()  - altLabel surface                                       #
     # ------------------------------------------------------------------ #
 
     def test_synonyms_is_non_empty(self) -> None:

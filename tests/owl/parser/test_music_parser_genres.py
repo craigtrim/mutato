@@ -38,7 +38,7 @@ class TestMusicParserGenres(unittest.TestCase):
         return [s['canon'] for s in self._swaps(text)]
 
     # ------------------------------------------------------------------ #
-    # Genre — exact match                                                  #
+    # Genre  - exact match                                                  #
     # ------------------------------------------------------------------ #
 
     def test_jazz_exact_match(self) -> None:
@@ -66,7 +66,7 @@ class TestMusicParserGenres(unittest.TestCase):
         self.assertIn('romantic', self._canons('Romantic'))
 
     # ------------------------------------------------------------------ #
-    # Concepts — exact match                                               #
+    # Concepts  - exact match                                               #
     # ------------------------------------------------------------------ #
 
     def test_melody_exact_match(self) -> None:

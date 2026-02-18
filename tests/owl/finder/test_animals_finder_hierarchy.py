@@ -25,7 +25,7 @@ class TestAnimalsFinderHierarchy(unittest.TestCase):
         cls.finder = FindOntologyJSON(d_owl=d_owl, ontology_name='animals')
 
     # ------------------------------------------------------------------ #
-    # children() — first-level                                            #
+    # children()  - first-level                                            #
     # ------------------------------------------------------------------ #
 
     def test_animal_children_includes_mammal(self) -> None:
